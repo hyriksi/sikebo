@@ -60,7 +60,7 @@ class Auth extends CI_Controller
 			'protocol' => 'smtp',
 			'smtp_host' => 'ssl://smtp.googlemail.com',
 			'smtp_user' => 'sikebo.buncob@gmail.com',
-			'smtp_pass' => 'sikebo123',
+			'smtp_pass' => 'sikebo1007',
 			'smtp_port' => 465,
 			'mailtype' => 'html',
 			'charset' => 'utf-8',

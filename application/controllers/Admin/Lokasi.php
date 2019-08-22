@@ -58,7 +58,7 @@ class Lokasi extends CI_Controller
 			$this->session->set_flashdata($notif);
 			redirect('Admin/Lokasi');
 		} else {
-			
+
 			$data = array(
 				'nama_lokasi' => $lokasi,
 				'luas' => $luas,
@@ -66,31 +66,29 @@ class Lokasi extends CI_Controller
 
 			$idlokasi = $this->M_lokasi->create($data, 'lokasi');
 
-			for($i=0;$i<$jumlah;$i++){
+			for ($i = 0; $i < $jumlah; $i++) {
 				$detail[$i] = array(
-					'id_lokasi' => $idlokasi, 
+					'id_lokasi' => $idlokasi,
 					'id_komoditas' => $check[$i],
 				);
-				// var_dump($detail);
 			};
 
-			if ($jumlah == 0 ) {
+			if ($jumlah == 0) {
 				$notif = array(
 					'status' => "gagal",
 					'message' => "Gagal ditambahkan. Pilih setidaknya satu komoditas",
 				);
 				$where = array('id_lokasi' => $idlokasi);
-				
+
 				$this->session->set_flashdata($notif);
 				$this->M_lokasi->trash($where, 'lokasi');
 				redirect('Admin/Lokasi');
-
-			}else{
+			} else {
 				$notif = array(
 					'status' => "berhasil",
 					'message' => "Lokasi berhasil ditambahkan",
 				);
-				
+
 				$this->session->set_flashdata($notif);
 				$this->M_lokasi->komoditas($detail, 'detail_lokasi');
 				redirect('Admin/Lokasi');
@@ -118,36 +116,35 @@ class Lokasi extends CI_Controller
 		$luas = $this->input->post('luas');
 		$check = $this->input->post('komoditas[]');
 		$jumlah = count($check);
-		
+
 		$where = array('id_lokasi' => $id);
 		$data = array(
 			'nama_lokasi' => $lokasi,
 			'luas' => $luas,
 		);
-		
-		for($i=0;$i<$jumlah;$i++){
+
+		for ($i = 0; $i < $jumlah; $i++) {
 			$detail[$i] = array(
-				'id_lokasi' => $id, 
+				'id_lokasi' => $id,
 				'id_komoditas' => $check[$i],
 			);
 			// var_dump($detail);
 		};
-		if ($jumlah == 0 ) {
+		if ($jumlah == 0) {
 			$notif = array(
 				'status' => "gagal",
 				'message' => "Gagal diperbarui. Pilih setidaknya satu komoditas!",
 			);
 			$where = array('id_lokasi' => $idlokasi);
-			
+
 			$this->session->set_flashdata($notif);
 			redirect('Admin/Lokasi');
-			
-		}else{
+		} else {
 			$notif = array(
 				'status' => "berhasil",
 				'message' => "Lokasi berhasil diperbarui",
 			);
-			
+
 			$this->session->set_flashdata($notif);
 			$this->M_lokasi->trash($where, 'detail_lokasi');
 			$this->M_lokasi->replace($where, $data, 'lokasi');
