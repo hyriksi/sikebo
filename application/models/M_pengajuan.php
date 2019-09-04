@@ -14,14 +14,47 @@ class M_pengajuan extends CI_Model
 		return $this->db->get($table);
 	}
 
-	function cek_lokasi($lokasi, $tanggal, $panen)
+	function cek_1($lokasi, $tanggal, $panen)
 	{
 		$status = "ditolak";
 		$this->db->join('detail_kegiatan', 'detail_kegiatan.id_pemesanan=pemesanan.id_pemesanan');
 		$this->db->where('pemesanan.id_lokasi', $lokasi);
 		$this->db->where('pemesanan.status_pemesanan !=', $status);
-		$this->db->where('pemesanan.tgl_penelitian BETWEEN "' . date('Y-m-d', strtotime($tanggal)) . '" and "' . date('Y-m-d', strtotime($panen)) . '"');
-		$this->db->or_where('detail_kegiatan.panen BETWEEN "' . date('Y-m-d', strtotime($tanggal)) . '" and "' . date('Y-m-d', strtotime($panen)) . '"');
+		$this->db->where('pemesanan.tgl_penelitian >=', $tanggal);
+		$this->db->where('pemesanan.tgl_penelitian <=', $panen);
+		return $this->db->get('pemesanan');
+	}
+
+	function cek_2($lokasi, $tanggal, $panen)
+	{
+		$status = "ditolak";
+		$this->db->join('detail_kegiatan', 'detail_kegiatan.id_pemesanan=pemesanan.id_pemesanan');
+		$this->db->where('pemesanan.id_lokasi', $lokasi);
+		$this->db->where('pemesanan.status_pemesanan !=', $status);
+		$this->db->where('detail_kegiatan.panen >=', $tanggal);
+		$this->db->where('detail_kegiatan.panen <=', $panen);
+		return $this->db->get('pemesanan');
+	}
+
+	function cek_3($lokasi, $tanggal)
+	{
+		$status = "ditolak";
+		$this->db->join('detail_kegiatan', 'detail_kegiatan.id_pemesanan=pemesanan.id_pemesanan');
+		$this->db->where('pemesanan.id_lokasi', $lokasi);
+		$this->db->where('pemesanan.status_pemesanan !=', $status);
+		$this->db->where('pemesanan.tgl_penelitian <=', $tanggal);
+		$this->db->where('detail_kegiatan.panen >=', $tanggal);
+		return $this->db->get('pemesanan');
+	}
+
+	function cek_4($lokasi, $panen)
+	{
+		$status = "ditolak";
+		$this->db->join('detail_kegiatan', 'detail_kegiatan.id_pemesanan=pemesanan.id_pemesanan');
+		$this->db->where('pemesanan.id_lokasi', $lokasi);
+		$this->db->where('pemesanan.status_pemesanan !=', $status);
+		$this->db->where('pemesanan.tgl_penelitian <=', $panen);
+		$this->db->where('detail_kegiatan.panen >=', $panen);
 		return $this->db->get('pemesanan');
 	}
 

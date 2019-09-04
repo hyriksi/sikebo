@@ -52,6 +52,18 @@ class Pengajuan extends CI_Controller
 		echo json_encode($data);
 	}
 
+	private function _notifFail()
+	{
+		$notif = array(
+			'status' => "gagal",
+			'message' => "Mohon maaf, lokasi yang anda pilih tidak tersedia.",
+		);
+		$this->session->set_flashdata($notif);
+		$this->load->view('dashboard/sidebar');
+		$this->load->view('dashboard/peneliti/pengajuan/lokasierror');
+		$this->load->view('dashboard/footer');
+	}
+
 	public function tambah()
 	{
 		$judul = $this->input->post('judul');
@@ -70,57 +82,66 @@ class Pengajuan extends CI_Controller
 		$panen = $this->input->post('tpanen');
 		$keterangan = $this->input->post('keterangan');
 
-		$cek = $this->M_pengajuan->cek_lokasi($lokasi, $tanggal, $panen);
+		// var_dump($cek);
+		// die;
+		$cek = $this->M_pengajuan->cek_1($lokasi, $tanggal, $panen);
 		if ($cek->num_rows() > 0) {
-			$notif = array(
-				'status' => "gagal",
-				'message' => "Mohon maaf, lokasi yang anda pilih tidak tersedia.",
-			);
-			$this->session->set_flashdata($notif);
-			$this->load->view('dashboard/sidebar');
-			$this->load->view('dashboard/peneliti/pengajuan/lokasierror');
-			$this->load->view('dashboard/footer');
+			$this->_notifFail();
 		} else {
+			$cek = $this->M_pengajuan->cek_2($lokasi, $tanggal, $panen);
+			if ($cek->num_rows() > 0) {
+				$this->_notifFail();
+			} else {
+				$cek = $this->M_pengajuan->cek_3($lokasi, $tanggal);
+				if ($cek->num_rows() > 0) {
+					$this->_notifFail();
+				} else {
+					$cek = $this->M_pengajuan->cek_4($lokasi, $panen);
+					if ($cek->num_rows() > 0) {
+						$this->_notifFail();
+					} else {
+						$pemesanan = array(
+							'id_pemesanan' => $this->M_pengajuan->code(),
+							'id_user' => $this->session->userdata('id'),
+							'id_lokasi' => $lokasi,
+							'luas_pakai' => $luas,
+							'judul_penelitian' => $judul,
+							'tgl_penelitian' => $tanggal,
+							'id_komoditas' => $komoditas,
+							'status_pemesanan' => "pending",
+							'keterangan' => $keterangan,
+						);
 
-			$pemesanan = array(
-				'id_pemesanan' => $this->M_pengajuan->code(),
-				'id_user' => $this->session->userdata('id'),
-				'id_lokasi' => $lokasi,
-				'luas_pakai' => $luas,
-				'judul_penelitian' => $judul,
-				'tgl_penelitian' => $tanggal,
-				'id_komoditas' => $komoditas,
-				'status_pemesanan' => "pending",
-				'keterangan' => $keterangan,
-			);
+						for ($i = 0; $i < $jumlah; $i++) {
+							$detail[$i] = array(
+								'id_pemesanan' => $this->M_pengajuan->code(),
+								'id_kebutuhan' => $check[$i],
+							);
+						}
 
-			for ($i = 0; $i < $jumlah; $i++) {
-				$detail[$i] = array(
-					'id_pemesanan' => $this->M_pengajuan->code(),
-					'id_kebutuhan' => $check[$i],
-				);
+						$kegiatan = array(
+							'id_pemesanan' => $this->M_pengajuan->code(),
+							'semai' => $semai,
+							'pindah' => $pindah,
+							'pengolahan' => $pengolahan,
+							'pemupukan1' => $pemupukan1,
+							'pemupukan2' => $pemupukan2,
+							'pemupukan3' => $pemupukan3,
+							'panen' => $panen,
+						);
+
+						$this->M_pengajuan->pemesanan($pemesanan, 'pemesanan');
+						$this->M_pengajuan->kebutuhan($detail, 'detail_pemesanan');
+						$this->M_pengajuan->kegiatan($kegiatan, 'detail_kegiatan');
+						$notif = array(
+							'status' => "berhasil",
+							'message' => "Pengajuan berhasil dikirim dan akan ditinjau oleh Admin.",
+						);
+						$this->session->set_flashdata($notif);
+						redirect('Peneliti/Pengajuan');
+					}
+				}
 			}
-
-			$kegiatan = array(
-				'id_pemesanan' => $this->M_pengajuan->code(),
-				'semai' => $semai,
-				'pindah' => $pindah,
-				'pengolahan' => $pengolahan,
-				'pemupukan1' => $pemupukan1,
-				'pemupukan2' => $pemupukan2,
-				'pemupukan3' => $pemupukan3,
-				'panen' => $panen,
-			);
-
-			$this->M_pengajuan->pemesanan($pemesanan, 'pemesanan');
-			$this->M_pengajuan->kebutuhan($detail, 'detail_pemesanan');
-			$this->M_pengajuan->kegiatan($kegiatan, 'detail_kegiatan');
-			$notif = array(
-				'status' => "berhasil",
-				'message' => "Pengajuan berhasil dikirim dan akan ditinjau oleh Admin.",
-			);
-			$this->session->set_flashdata($notif);
-			redirect('Peneliti/Pengajuan');
 		}
 	}
 

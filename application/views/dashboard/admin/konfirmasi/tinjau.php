@@ -42,7 +42,7 @@
                          <td>Kebutuhan</td>
                          <td>:</td>
                          <td><?php foreach ($detail_pemesanan as $d) { ?>
-                                 -<?php echo $d->nama_kebutuhan ?>
+                             -<?php echo $d->nama_kebutuhan ?>
                              <?php } ?></td>
                      </tr>
                      <tr>
@@ -90,15 +90,15 @@
                  <div class="form-group">
                      <?php echo form_open('Admin/Konfirmasi/terima') ?>
                      <div class="row">
-                         <div class="col-md-1">
+                         <div class="col-md-2">
                              <input type="hidden" name="id" class="form-control" value="<?php echo $pemesanan['id_pemesanan'] ?>" required readonly>
                              <button type="submit" class="btn btn-success"><i class="fa fa-check"></i> Terima</button>
                          </div>
                          <?php echo form_close() ?>
                          <?php echo form_open('Admin/Konfirmasi/tolak') ?>
-                         <div class="col-md-1">
+                         <div class="col-md-2">
                              <input type="hidden" name="id" class="form-control" value="<?php echo $pemesanan['id_pemesanan'] ?>" required readonly>
-                             <button type="submit" class="btn btn-danger"><i class="fa fa-close"></i> Tolak</button>
+                             <button type="submit" class="btn btn-danger pull-right"><i class="fa fa-close"></i> Tolak</button>
                          </div>
                      </div>
                      <?php echo form_close(); ?>
