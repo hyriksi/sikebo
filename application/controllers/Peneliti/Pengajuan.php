@@ -182,59 +182,67 @@ class Pengajuan extends CI_Controller
 
 		$where = array('id_pemesanan' => $id);
 
-		$cek = $this->M_pengajuan->cek_lokasi($lokasi, $tanggal, $panen);
-		if ($cek->num_rows() > 1) {
-			$notif = array(
-				'status' => "gagal",
-				'message' => "Mohon maaf, lokasi yang anda pilih tidak tersedia.",
-			);
-			$this->session->set_flashdata($notif);
-			$this->load->view('dashboard/sidebar');
-			$this->load->view('dashboard/peneliti/pengajuan/lokasierror');
-			$this->load->view('dashboard/footer');
+		$cek = $this->M_pengajuan->cek_1($lokasi, $tanggal, $panen);
+		if ($cek->num_rows() >= 1) {
+			$this->_notifFail();
 		} else {
+			$cek = $this->M_pengajuan->cek_2($lokasi, $tanggal, $panen);
+			if ($cek->num_rows() >= 1) {
+				$this->_notifFail();
+			} else {
+				$cek = $this->M_pengajuan->cek_3($lokasi, $tanggal);
+				if ($cek->num_rows() >= 1) {
+					$this->_notifFail();
+				} else {
+					$cek = $this->M_pengajuan->cek_4($lokasi, $panen);
+					if ($cek->num_rows() >= 1) {
+						$this->_notifFail();
+					} else {
+						$pemesanan = array(
+							'id_user' => $this->session->userdata('id'),
+							'id_lokasi' => $lokasi,
+							'luas_pakai' => $luas,
+							'judul_penelitian' => $judul,
+							'tgl_penelitian' => $tanggal,
+							'id_komoditas' => $komoditas,
+							'status_pemesanan' => "pending",
+							'keterangan' => $keterangan,
+						);
 
-			$pemesanan = array(
-				'id_user' => $this->session->userdata('id'),
-				'id_lokasi' => $lokasi,
-				'luas_pakai' => $luas,
-				'judul_penelitian' => $judul,
-				'tgl_penelitian' => $tanggal,
-				'id_komoditas' => $komoditas,
-				'status_pemesanan' => "pending",
-				'keterangan' => $keterangan,
-			);
+						for ($i = 0; $i < $jumlah; $i++) {
+							$detail[$i] = array(
+								'id_pemesanan' => $id,
+								'id_kebutuhan' => $check[$i],
+							);
+						}
 
-			for ($i = 0; $i < $jumlah; $i++) {
-				$detail[$i] = array(
-					'id_pemesanan' => $id,
-					'id_kebutuhan' => $check[$i],
-				);
+						$kegiatan = array(
+							'id_pemesanan' => $id,
+							'semai' => $semai,
+							'pindah' => $pindah,
+							'pengolahan' => $pengolahan,
+							'pemupukan1' => $pemupukan1,
+							'pemupukan2' => $pemupukan2,
+							'pemupukan3' => $pemupukan3,
+							'panen' => $panen,
+						);
+
+						$this->M_pengajuan->replace($where, $pemesanan, 'pemesanan');
+						$this->M_pengajuan->trash($where, 'detail_pemesanan');
+						$this->M_pengajuan->kebutuhan($detail, 'detail_pemesanan');
+						$this->M_pengajuan->replace_kegiatan($where, $kegiatan, 'detail_kegiatan');
+						$notif = array(
+							'status' => "berhasil",
+							'message' => "Pengajuan berhasil diperbarui, pengajuan akan diperiksa terlebih dahulu",
+						);
+						$this->session->set_flashdata($notif);
+						redirect('Peneliti/Pengajuan');
+					}
+				}
 			}
-
-			$kegiatan = array(
-				'id_pemesanan' => $id,
-				'semai' => $semai,
-				'pindah' => $pindah,
-				'pengolahan' => $pengolahan,
-				'pemupukan1' => $pemupukan1,
-				'pemupukan2' => $pemupukan2,
-				'pemupukan3' => $pemupukan3,
-				'panen' => $panen,
-			);
-
-			$this->M_pengajuan->replace($where, $pemesanan, 'pemesanan');
-			$this->M_pengajuan->trash($where, 'detail_pemesanan');
-			$this->M_pengajuan->kebutuhan($detail, 'detail_pemesanan');
-			$this->M_pengajuan->replace_kegiatan($where, $kegiatan, 'detail_kegiatan');
-			$notif = array(
-				'status' => "berhasil",
-				'message' => "Pengajuan berhasil diperbarui, pengajuan akan diperiksa terlebih dahulu",
-			);
-			$this->session->set_flashdata($notif);
-			redirect('Peneliti/Pengajuan');
 		}
 	}
+
 
 	public function hapus($id)
 	{
