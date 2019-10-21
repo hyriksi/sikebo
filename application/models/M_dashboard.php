@@ -13,6 +13,17 @@ class M_dashboard extends CI_Model
         $this->db->join('detail_kegiatan', 'detail_kegiatan.id_pemesanan=pemesanan.id_pemesanan');
         return $this->db->get($table);
     }
+
+    function lokasi_digunakan($datenow)
+    {
+        $this->db->select('pemesanan.*,detail_kegiatan.panen');
+        $this->db->from('pemesanan');
+        $this->db->join('detail_kegiatan', 'detail_kegiatan.id_pemesanan=pemesanan.id_pemesanan');
+        $this->db->where('status_pemesanan !=', 'ditolak');
+        $this->db->where('pemesanan.tgl_penelitian <=', $datenow);
+        $this->db->where('detail_kegiatan.panen >=', $datenow);
+        return $this->db->count_all_results();
+    }
 }
 
 /* End of file M_dashboard.php */

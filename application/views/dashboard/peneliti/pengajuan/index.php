@@ -39,7 +39,7 @@
 										<td class="text-center">
 											<a href="<?php echo site_url('Peneliti/Pengajuan/edit/' . $p->id_pemesanan) ?>" class="btn btn-info btn-xs"><i class="fa fa-edit"></i></a>
 											<a href="#" data-url="<?php echo site_url('Peneliti/Pengajuan/hapus/' . $p->id_pemesanan) ?>" class="btn btn-danger btn-xs confirm_delete"><i class="fa fa-trash"></i></a>
-											<a href="<?php echo site_url('Peneliti/Pengajuan/cetak/' . $p->id_pemesanan) ?>" class="btn btn-success btn-xs"><i class="fa fa-print"></i></a>
+											<a href="<?php echo site_url('Peneliti/Pengajuan/cetak/' . $p->id_pemesanan) ?>" class="btn <?php if ($p->status_pemesanan == "diterima") echo "btn-success" ?> <?php if ($p->status_pemesanan != "diterima") echo "btn-default" ?> btn-xs"><i class="fa fa-print"></i></a>
 										</td>
 									</tr>
 								<?php } ?>

@@ -21,6 +21,8 @@ class Dashboard extends CI_Controller
 
 	public function index()
 	{
+		$datenow = date('y-m-d');
+		$data['lokasi'] = $this->M_dashboard->lokasi_digunakan($datenow);
 		$data['pengajuan'] = $this->M_dashboard->list_pengajuan('pemesanan')->result();
 
 		$this->load->view('dashboard/sidebar');

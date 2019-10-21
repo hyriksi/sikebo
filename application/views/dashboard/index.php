@@ -19,15 +19,35 @@
       <div class="row">
         <div class="col-lg-3 col-xs-6">
           <!-- small box -->
+          <div class="small-box bg-red">
+            <div class="inner">
+              <h3>
+                <?php
+                  $this->db->from('pemesanan');
+                  $this->db->where('status_pemesanan', 'pending');
+                  echo $this->db->count_all_results();
+                  ?>
+              </h3>
+              <p>Konfirmasi Pengajuan</p>
+            </div>
+            <div class="icon">
+              <i class="fa fa-laptop"></i>
+            </div>
+          </div>
+        </div>
+        <!-- ./col -->
+        <div class="col-lg-3 col-xs-6">
+          <!-- small box -->
           <div class="small-box bg-aqua">
             <div class="inner">
               <h3>
                 <?php
-                $this->db->from('lokasi');
-                echo $this->db->count_all_results();
-                ?>
+                  $this->db->from('lokasi');
+                  $a = $this->db->count_all_results();
+                  echo $a - $lokasi;
+                  ?>
               </h3>
-              <p>Lokasi</p>
+              <p>Lokasi tersedia</p>
             </div>
             <div class="icon">
               <i class="ion ion-navigate"></i>
@@ -41,10 +61,10 @@
             <div class="inner">
               <h3>
                 <?php
-                $this->db->from('user');
-                $this->db->where('akses', 'peneliti');
-                echo $this->db->count_all_results();
-                ?>
+                  $this->db->from('user');
+                  $this->db->where('akses', 'peneliti');
+                  echo $this->db->count_all_results();
+                  ?>
               </h3>
               <p>Peneliti</p>
             </div>
@@ -60,9 +80,9 @@
             <div class="inner">
               <h3>
                 <?php
-                $this->db->from('komoditas');
-                echo $this->db->count_all_results();
-                ?>
+                  $this->db->from('komoditas');
+                  echo $this->db->count_all_results();
+                  ?>
               </h3>
               <p>Komoditas</p>
             </div>
@@ -72,26 +92,32 @@
           </div>
         </div>
         <!-- ./col -->
+      </div>
+      <!-- /.row -->
+    <?php } ?>
+    <?php if ($this->session->userdata('akses') == 'peneliti') { ?>
+      <!-- Small boxes (Stat box) -->
+      <div class="row">
         <div class="col-lg-3 col-xs-6">
           <!-- small box -->
-          <div class="small-box bg-red">
+          <div class="small-box bg-aqua">
             <div class="inner">
               <h3>
                 <?php
-                $this->db->from('pemesanan');
-                echo $this->db->count_all_results();
-                ?>
+                  $this->db->from('lokasi');
+                  $a = $this->db->count_all_results();
+                  echo $a - $lokasi;
+                  ?>
               </h3>
-              <p>Pengajuan</p>
+              <p>Lokasi tersedia</p>
             </div>
             <div class="icon">
-              <i class="fa fa-laptop"></i>
+              <i class="ion ion-navigate"></i>
             </div>
           </div>
         </div>
-        <!-- ./col -->
       </div>
-      <!-- /.row -->
+      <!-- ./col -->
     <?php } ?>
     <div class="box">
       <div class="box-header">
